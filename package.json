@@ -1,0 +1,53 @@
+{
+  "name": "clicbot-unofficial",
+  "version": "1.0.0",
+  "description": "Unofficial Node.js library for controlling ClicBot modular robots over TCP/UDP",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "clicbot",
+    "robot",
+    "iot",
+    "modular-robot"
+  ],
+  "author": "Hannes Rüger",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "example:01-connection:01-discovery": "tsx examples/01-connection/01-discovery.ts",
+    "example:01-connection:02-basic": "tsx examples/01-connection/02-basic.ts",
+    "example:01-connection:03-qrcode": "tsx examples/01-connection/03-qrcode.ts",
+    "example:02-motion:01-servo": "tsx examples/02-motion/01-servo.ts",
+    "example:02-motion:02-rotate": "tsx examples/02-motion/02-rotate.ts",
+    "example:02-motion:03-lock": "tsx examples/02-motion/03-lock.ts",
+    "example:03-actions:01-upload": "tsx examples/03-actions/01-upload.ts",
+    "example:03-actions:02-execute": "tsx examples/03-actions/02-execute.ts",
+    "example:03-actions:03-bac": "tsx examples/03-actions/03-bac.ts",
+    "example:04-programs:03-executor": "tsx examples/04-programs/03-executor.ts",
+    "example:05-structure:01-mermaid": "tsx examples/05-structure/01-mermaid.ts"
+  },
+  "packageManager": "pnpm@10.29.3",
+  "dependencies": {
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "@types/qrcode": "^1.5.6",
+    "dotenv": "^17.3.1",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3"
+  }
+}
