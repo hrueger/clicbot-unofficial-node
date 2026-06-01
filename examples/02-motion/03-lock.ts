@@ -5,7 +5,11 @@
  */
 import { BrainState, ClicBot, FullStopType } from "../../src/ClicBot";
 
-const HOST = process.env.IP ?? (() => { throw new Error("IP env var required"); })();
+const HOST =
+    process.env.IP ??
+    (() => {
+        throw new Error("IP env var required");
+    })();
 const PORT = Number(process.env.PORT ?? 9632);
 
 function waitForEnter(): Promise<void> {
@@ -24,7 +28,10 @@ async function main(): Promise<void> {
     bot.sendClientInfo();
 
     await new Promise<void>((resolve) => {
-        bot.once("clientInfo", () => { bot.setBrainState(BrainState.CUSTOM); bot.requestStructure(); });
+        bot.once("clientInfo", () => {
+            bot.setBrainState(BrainState.CUSTOM);
+            bot.requestStructure();
+        });
         bot.once("structure", () => resolve());
     });
 
@@ -64,19 +71,25 @@ async function main(): Promise<void> {
     // Lock / unlock all joints via the module API
     if (joints.length >= 2) {
         console.log(`Lock all joints — press Enter to continue`);
-        joints.forEach(j => j.lock(true));
+        for (const j of joints) j.lock(true);
         await waitForEnter();
 
         console.log("Unlock all joints — press Enter to continue");
-        joints.forEach(j => j.lock(false));
+        for (const j of joints) j.lock(false);
         await waitForEnter();
     }
 
     // lockByPosture is bot-level (semantically distinct from per-module lock)
     console.log("Lock by posture — press Enter to continue");
-    bot.lockByPosture(joints.map(j => j.id), true);
+    bot.lockByPosture(
+        joints.map((j) => j.id),
+        true,
+    );
     await waitForEnter();
-    bot.lockByPosture(joints.map(j => j.id), false);
+    bot.lockByPosture(
+        joints.map((j) => j.id),
+        false,
+    );
 
     bot.disconnect();
     process.exit(0);

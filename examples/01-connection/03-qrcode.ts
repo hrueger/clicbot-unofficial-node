@@ -12,14 +12,18 @@
  *   QR_FILE    — output path when QR_OUTPUT=file (default "qrcode.png")
  */
 import { BrainState, ClicBot } from "../../src/ClicBot";
-import { buildQrContent, showQrCode, waitForRobot, QrOutput } from "../../src/discovery";
+import { buildQrContent, type QrOutput, showQrCode, waitForRobot } from "../../src/discovery";
 
 const SSID =
     process.env.SSID ??
-    (() => { throw new Error("SSID env var required"); })();
+    (() => {
+        throw new Error("SSID env var required");
+    })();
 const PASSWORD =
     process.env.PASSWORD ??
-    (() => { throw new Error("PASSWORD env var required"); })();
+    (() => {
+        throw new Error("PASSWORD env var required");
+    })();
 
 function buildOutput(): QrOutput {
     const mode = process.env.QR_OUTPUT ?? "terminal";
@@ -65,4 +69,7 @@ async function main(): Promise<void> {
     });
 }
 
-main().catch((err) => { console.error("Fatal:", err); process.exit(1); });
+main().catch((err) => {
+    console.error("Fatal:", err);
+    process.exit(1);
+});

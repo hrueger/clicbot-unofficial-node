@@ -1,4 +1,4 @@
-import { ModuleType, RawModuleInfo } from "./structure";
+import { ModuleType, type RawModuleInfo } from "./structure";
 
 /**
  * Minimal interface that module objects use to dispatch commands.
@@ -66,7 +66,8 @@ export class ClicBotModule {
     }
 
     protected get cmd(): ModuleController {
-        if (!this._controller) throw new Error(`Module ${this.id} is not bound to a bot — call requestStructure() first`);
+        if (!this._controller)
+            throw new Error(`Module ${this.id} is not bound to a bot — call requestStructure() first`);
         return this._controller;
     }
 }

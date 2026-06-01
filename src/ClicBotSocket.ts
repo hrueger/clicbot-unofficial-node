@@ -9,8 +9,8 @@ export interface ClicBotSocketOptions {
 }
 
 export class ClicBotSocket extends EventEmitter<{
-    connect: [void];
-    close: [void];
+    connect: [undefined];
+    close: [undefined];
     error: [Error];
     heartbeat: [TCPDataPacket];
     packet: [TCPDataPacket];
@@ -45,7 +45,7 @@ export class ClicBotSocket extends EventEmitter<{
                 this.socket.off("error", onError);
                 this.startPulseLoop();
                 this.sendPulse();
-                this.emit("connect");
+                this.emit("connect", undefined);
                 resolve();
             };
             this.socket.once("error", onError);
@@ -74,7 +74,7 @@ export class ClicBotSocket extends EventEmitter<{
 
         this.socket.on("close", () => {
             this.stopPulseLoop();
-            this.emit("close");
+            this.emit("close", undefined);
         });
 
         this.socket.on("error", (err) => {

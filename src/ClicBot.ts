@@ -1,10 +1,23 @@
 import { EventEmitter } from "node:events";
 import { ClicBotSocket } from "./ClicBotSocket";
 import { CommandData } from "./CommandData";
+import {
+    type ClicBotModule,
+    createModuleFromRaw,
+    type ModuleController,
+    ServoJointModule,
+    ServoWheelModule,
+} from "./modules";
 import { PacketType } from "./PacketTypes";
-import { TCPDataPacket } from "./TCPDataPacket";
-import { createModuleFromRaw, ClicBotModule, ModuleController, ServoJointModule, ServoWheelModule } from "./modules";
-import { encodeAngle, getAngleRequestModuleIds, ModuleType, parseAngleData, parseStructureData, RawModuleInfo } from "./structure";
+import {
+    encodeAngle,
+    getAngleRequestModuleIds,
+    ModuleType,
+    parseAngleData,
+    parseStructureData,
+    type RawModuleInfo,
+} from "./structure";
+import type { TCPDataPacket } from "./TCPDataPacket";
 
 export enum BrainState {
     /** Interactive / custom control mode. Send after connecting to enable motion control. */
@@ -327,7 +340,9 @@ export class ClicBot extends EventEmitter<{
      * Distance-bar modules and the root are excluded (matches app behaviour).
      */
     lockByStructure(locked: boolean): void {
-        const ids = this.rawStructure.filter((m) => m.moduleId > 0 && m.moduleId <= 255 && m.type !== ModuleType.DISTANCE_BAR).map((m) => m.moduleId);
+        const ids = this.rawStructure
+            .filter((m) => m.moduleId > 0 && m.moduleId <= 255 && m.type !== ModuleType.DISTANCE_BAR)
+            .map((m) => m.moduleId);
         this.lockModules(ids, locked);
     }
 
@@ -387,7 +402,10 @@ export class ClicBot extends EventEmitter<{
      * Body: [moduleIndex: u8, moduleType: u8, value: u8].
      */
     controlExecutor(moduleIndex: number, moduleType: number, value: number): void {
-        this.socket.sendCommand(PacketType.TCP_EXECUTOR_CONTROL_REQUEST, Buffer.from([moduleIndex & 0xff, moduleType & 0xff, value & 0xff]));
+        this.socket.sendCommand(
+            PacketType.TCP_EXECUTOR_CONTROL_REQUEST,
+            Buffer.from([moduleIndex & 0xff, moduleType & 0xff, value & 0xff]),
+        );
     }
 
     // ── Internal ───────────────────────────────────────────────────────────────
@@ -525,6 +543,7 @@ function buildSplineResourceBody(action: ActionDefinition): Buffer {
             if (!moduleFrames.has(posture.moduleId)) {
                 moduleFrames.set(posture.moduleId, []);
             }
+            // biome-ignore lint/style/noNonNullAssertion: set in the line above
             const frames = moduleFrames.get(posture.moduleId)!;
             frames.push({ time: t + step.executeTime, angle: posture.angle });
             if (step.delayTime > 1e-4) {

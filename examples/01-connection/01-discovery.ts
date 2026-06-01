@@ -4,12 +4,13 @@
  *   2. discoverAll:   collect all robots within a timeout
  *   3. continuous:    stream devices via event callback, stop manually
  */
-import { ClicBotDiscovery } from "../../src/discovery";
+
 import { BrainState, ClicBot } from "../../src/ClicBot";
+import { ClicBotDiscovery } from "../../src/discovery";
 
 async function main(): Promise<void> {
     console.log("Waiting for first robot (max 5 s)...");
-    let target;
+    let target: Awaited<ReturnType<typeof ClicBotDiscovery.discoverFirst>>;
     try {
         target = await ClicBotDiscovery.discoverFirst(5000);
         console.log("First found:", target);

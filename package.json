@@ -27,6 +27,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
+    "format": "biome format --write .",
+    "check": "biome check --write .",
     "example:01-connection:01-discovery": "tsx examples/01-connection/01-discovery.ts",
     "example:01-connection:02-basic": "tsx examples/01-connection/02-basic.ts",
     "example:01-connection:03-qrcode": "tsx examples/01-connection/03-qrcode.ts",
@@ -44,6 +46,7 @@
     "qrcode": "^1.5.4"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.4.16",
     "@types/node": "^25.5.0",
     "@types/qrcode": "^1.5.6",
     "dotenv": "^17.3.1",

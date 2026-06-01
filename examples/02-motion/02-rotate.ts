@@ -5,7 +5,11 @@
  */
 import { BrainState, ClicBot } from "../../src/ClicBot";
 
-const HOST = process.env.IP ?? (() => { throw new Error("IP env var required"); })();
+const HOST =
+    process.env.IP ??
+    (() => {
+        throw new Error("IP env var required");
+    })();
 const PORT = Number(process.env.PORT ?? 9632);
 
 function sleep(ms: number): Promise<void> {
@@ -23,7 +27,10 @@ async function main(): Promise<void> {
     bot.sendClientInfo();
 
     await new Promise<void>((resolve) => {
-        bot.once("clientInfo", () => { bot.setBrainState(BrainState.CUSTOM); bot.requestStructure(); });
+        bot.once("clientInfo", () => {
+            bot.setBrainState(BrainState.CUSTOM);
+            bot.requestStructure();
+        });
         bot.once("structure", () => resolve());
     });
 
@@ -37,11 +44,11 @@ async function main(): Promise<void> {
     console.log("Watch the joints spin. The sequence is: forward 3 s → reverse 3 s → stop → push-rotate 5 s.");
 
     console.log("Starting forward rotation");
-    joints.forEach(j => j.rotateStart(true, 30));
+    for (const j of joints) j.rotateStart(true, 30);
     await sleep(3000);
 
     console.log("Reversing");
-    joints.forEach(j => j.rotateStart(false, 30));
+    for (const j of joints) j.rotateStart(false, 30);
     await sleep(3000);
 
     // rotateStop is global (no per-module stop in the protocol)
@@ -58,4 +65,7 @@ async function main(): Promise<void> {
     bot.disconnect();
 }
 
-main().catch((err) => { console.error("Fatal:", err); process.exit(1); });
+main().catch((err) => {
+    console.error("Fatal:", err);
+    process.exit(1);
+});

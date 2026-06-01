@@ -2,7 +2,7 @@
  * Spline resource upload: build a custom keyframe motion, upload it, then execute it.
  * Module IDs for the action are taken from bot.servoJoints.
  */
-import { BrainState, ClicBot, ActionDefinition } from "../../src/ClicBot";
+import { type ActionDefinition, BrainState, ClicBot } from "../../src/ClicBot";
 
 const HOST =
     process.env.IP ??
@@ -68,7 +68,9 @@ async function main(): Promise<void> {
 
     console.log(`Uploading 3-step motion to slot 0 (joints ${j0.id} and ${j1.id})...`);
     await bot.uploadSplineResource(action);
-    console.log("Upload complete. You can now execute the action with example 03-execute.ts or via the executeAction method.");
+    console.log(
+        "Upload complete. You can now execute the action with example 03-execute.ts or via the executeAction method.",
+    );
     bot.disconnect();
 }
 

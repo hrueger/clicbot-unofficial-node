@@ -1,47 +1,45 @@
 export {
-    ClicBot,
-    BrainState,
-    FullStopType,
-    type ClientInfoPayload,
-    type ClicBotConnectOptions,
-    type ServoTarget,
-    type RotateTarget,
+    type ActionDefinition,
     type ActionPosture,
     type ActionStep,
-    type ActionDefinition,
+    BrainState,
+    ClicBot,
+    type ClicBotConnectOptions,
+    type ClientInfoPayload,
+    FullStopType,
+    type RotateTarget,
+    type ServoTarget,
 } from "./ClicBot";
 
 export {
-    ClicBotDiscovery,
     buildQrContent,
+    ClicBotDiscovery,
+    type DiscoveredDevice,
+    discoverViaQrCode,
+    type QrCodeDiscoveryOptions,
+    type QrOutput,
     showQrCode,
     waitForRobot,
-    discoverViaQrCode,
-    type DiscoveredDevice,
-    type QrOutput,
-    type QrCodeDiscoveryOptions,
 } from "./discovery";
 
 export {
-    ClicBotModule,
     BrainModule,
-    ServoJointModule,
+    ClicBotModule,
     DistanceBarModule,
-    ServoWheelModule,
     type ModuleController,
+    ServoJointModule,
+    ServoWheelModule,
 } from "./modules";
-
+export { PacketType } from "./PacketTypes";
 export {
-    ModuleType,
-    toMermaid,
     ANGLE_SCALE,
     encodeAngle,
-    parseStructureData,
-    parseAngleData,
     getAngleRequestModuleIds,
-    type RawModuleInfo,
     type LoopConnection,
+    ModuleType,
+    parseAngleData,
+    parseStructureData,
+    type RawModuleInfo,
+    toMermaid,
 } from "./structure";
-
-export { PacketType } from "./PacketTypes";
 export { TCPDataPacket } from "./TCPDataPacket";

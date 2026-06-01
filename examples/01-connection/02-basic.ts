@@ -1,9 +1,10 @@
 /**
  * Basic connection: handshake, structure, watchdog, angles, battery.
  */
+
+import * as fs from "node:fs/promises";
 import { BrainState, ClicBot } from "../../src/ClicBot";
 import { toMermaid } from "../../src/structure";
-import * as fs from "fs/promises";
 
 const HOST =
     process.env.IP ??

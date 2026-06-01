@@ -8,7 +8,11 @@
 import { BrainState, ClicBot } from "../../src/ClicBot";
 import { ModuleType } from "../../src/structure";
 
-const HOST = process.env.IP ?? (() => { throw new Error("IP env var required"); })();
+const HOST =
+    process.env.IP ??
+    (() => {
+        throw new Error("IP env var required");
+    })();
 const PORT = Number(process.env.PORT ?? 9632);
 
 async function main(): Promise<void> {
@@ -25,7 +29,10 @@ async function main(): Promise<void> {
     bot.sendClientInfo();
 
     const servoIds = await new Promise<number[]>((resolve) => {
-        bot.once("clientInfo", () => { bot.setBrainState(BrainState.CUSTOM); bot.requestStructure(); });
+        bot.once("clientInfo", () => {
+            bot.setBrainState(BrainState.CUSTOM);
+            bot.requestStructure();
+        });
         bot.once("structure", () => resolve(bot.getServoModuleIds()));
     });
 
@@ -37,7 +44,9 @@ async function main(): Promise<void> {
 
     const [id0] = servoIds;
 
-    console.log("The exact effect depends on firmware. Watch the executor reply bytes printed above to understand the response.");
+    console.log(
+        "The exact effect depends on firmware. Watch the executor reply bytes printed above to understand the response.",
+    );
 
     // Body: [moduleIndex: u8, moduleType: u8, value: u8]
     console.log(`controlExecutor(${id0}, SERVO_JOINT, 1)`);
@@ -47,4 +56,7 @@ async function main(): Promise<void> {
     bot.disconnect();
 }
 
-main().catch((err) => { console.error("Fatal:", err); process.exit(1); });
+main().catch((err) => {
+    console.error("Fatal:", err);
+    process.exit(1);
+});

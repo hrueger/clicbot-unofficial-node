@@ -39,11 +39,14 @@ async function main(): Promise<void> {
     bot.disconnect();
 
     const diagram = toMermaid(structure);
-    fs.writeFileSync(OUT, "```mermaid\n" + diagram + "\n```\n");
+    fs.writeFileSync(OUT, `\`\`\`mermaid\n${diagram}\n\`\`\`\n`);
 
     console.log(`Saved to ${OUT}`);
     console.log(`View it at https://mermaid.live — paste the diagram content (without the fences).`);
     console.log(`\n${structure.length} modules.`);
 }
 
-main().catch((err) => { console.error("Fatal:", err); process.exit(1); });
+main().catch((err) => {
+    console.error("Fatal:", err);
+    process.exit(1);
+});

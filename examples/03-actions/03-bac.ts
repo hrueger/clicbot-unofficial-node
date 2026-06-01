@@ -7,7 +7,11 @@
  */
 import { BrainState, ClicBot } from "../../src/ClicBot";
 
-const HOST = process.env.IP ?? (() => { throw new Error("IP env var required"); })();
+const HOST =
+    process.env.IP ??
+    (() => {
+        throw new Error("IP env var required");
+    })();
 const PORT = Number(process.env.PORT ?? 9632);
 
 function sleep(ms: number): Promise<void> {
@@ -23,7 +27,10 @@ async function main(): Promise<void> {
     bot.sendClientInfo();
 
     await new Promise<void>((resolve) => {
-        bot.once("clientInfo", () => { bot.setBrainState(BrainState.CUSTOM); bot.requestStructure(); });
+        bot.once("clientInfo", () => {
+            bot.setBrainState(BrainState.CUSTOM);
+            bot.requestStructure();
+        });
         bot.once("structure", () => resolve());
     });
 
@@ -37,4 +44,7 @@ async function main(): Promise<void> {
     bot.disconnect();
 }
 
-main().catch((err) => { console.error("Fatal:", err); process.exit(1); });
+main().catch((err) => {
+    console.error("Fatal:", err);
+    process.exit(1);
+});

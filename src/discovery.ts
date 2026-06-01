@@ -1,6 +1,6 @@
 import * as dgram from "node:dgram";
-import * as os from "node:os";
 import { EventEmitter } from "node:events";
+import * as os from "node:os";
 import { PacketType } from "./PacketTypes";
 import { UDPDataPacket } from "./UDPDataPacket";
 
@@ -86,7 +86,7 @@ export class ClicBotDiscovery extends EventEmitter<{
         });
 
         this.socket.bind(() => {
-            this.socket!.setBroadcast(true);
+            this.socket?.setBroadcast(true);
             this.sendSearch(searchPacket);
             this.broadcastInterval = setInterval(() => this.sendSearch(searchPacket), this.searchIntervalMs);
         });
@@ -140,9 +140,9 @@ export class ClicBotDiscovery extends EventEmitter<{
 
 /** How the QR code should be presented. */
 export type QrOutput =
-    | { mode: "terminal" }           // print ASCII QR code to stdout (requires qrcode package)
+    | { mode: "terminal" } // print ASCII QR code to stdout (requires qrcode package)
     | { mode: "file"; path: string } // save as PNG (requires qrcode package)
-    | { mode: "text" };              // print the raw WiFi config string, no qrcode package needed
+    | { mode: "text" }; // print the raw WiFi config string, no qrcode package needed
 
 export interface QrCodeDiscoveryOptions {
     ssid: string;
@@ -156,7 +156,9 @@ export interface QrCodeDiscoveryOptions {
 }
 
 /** Build the WiFi config URI that encodes credentials and UDP return address. */
-export function buildQrContent(options: Pick<QrCodeDiscoveryOptions, "ssid" | "password" | "localIp" | "udpPort">): string {
+export function buildQrContent(
+    options: Pick<QrCodeDiscoveryOptions, "ssid" | "password" | "localIp" | "udpPort">,
+): string {
     const localIp = options.localIp ?? getLocalIp();
     return `WIFI:T:WPA;P:${options.password};S:${options.ssid};IP:${localIp};Port:${options.udpPort ?? 12345}`;
 }
@@ -170,7 +172,7 @@ export async function showQrCode(content: string, output: QrOutput = { mode: "te
         try {
             qrcode = await import("qrcode");
         } catch {
-            throw new Error('npm install qrcode');
+            throw new Error("npm install qrcode");
         }
         if (output.mode === "terminal") {
             const art = await qrcode.toString(content, { type: "terminal" });
@@ -205,7 +207,7 @@ function getLocalIp(): string {
             if (iface.family === "IPv4" && !iface.internal) return iface.address;
         }
     }
-    throw new Error('Could not determine local IP — pass localIp explicitly');
+    throw new Error("Could not determine local IP — pass localIp explicitly");
 }
 
 function listenForRobotAnnouncement(udpPort: number, timeoutMs: number): Promise<DiscoveredDevice> {
