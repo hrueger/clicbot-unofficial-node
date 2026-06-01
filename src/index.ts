@@ -13,6 +13,9 @@ export {
 
 export {
     ClicBotDiscovery,
+    buildQrContent,
+    showQrCode,
+    waitForRobot,
     discoverViaQrCode,
     type DiscoveredDevice,
     type QrOutput,

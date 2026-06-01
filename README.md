@@ -21,39 +21,44 @@ import { ClicBot } from 'clicbot-unofficial';
 
 ## Connecting to the robot
 
-The robot communicates over TCP. Your computer and the robot must be on the **same IP network** first.
+The robot communicates over TCP. Your computer and the robot must be on the **same IP network**.
 
-### Option 1 — Existing WiFi (robot scans QR code)
+There are two network setups:
 
-Generate a QR code that encodes your WiFi credentials and a UDP return address, then hold it in front of the robot's camera. The robot scans it, joins your network, and announces its TCP endpoint back to your machine:
+### WiFi (recommended)
+
+The robot stores WiFi credentials and reconnects automatically on every boot. **The QR code step is only needed once** when joining a new network for the first time.
+
+**First time — provision the robot onto your WiFi:**
 
 ```ts
-import { discoverViaQrCode } from "./src/discovery";
+import { buildQrContent, showQrCode, waitForRobot } from "clicbot-unofficial";
 
-const { device } = await discoverViaQrCode({
-    ssid: "MyWifi",
-    password: "secret",
-    output: { mode: "terminal" }, // or { mode: "file", path: "qr.png" } or { mode: "text" }
-});
-// device.ip / device.port are now known
+const content = buildQrContent({ ssid: "MyWifi", password: "secret" });
+await showQrCode(content);        // terminal (default), or pass { mode: "file", path: "qr.png" }
+const device = await waitForRobot();
 ```
 
-### Option 2 — Robot hotspot
+Hold the QR code in front of the robot's camera. It joins your network, announces its address, and remembers the credentials from then on.
 
-The robot exposes its own WiFi access point. Connect your computer to it, then use UDP discovery to find the robot's IP, or connect directly if you know it:
+**Already provisioned — just discover it:**
 
 ```ts
-import { ClicBotDiscovery } from "./src/discovery";
+import { ClicBotDiscovery } from "clicbot-unofficial";
 
 const device = await ClicBotDiscovery.discoverFirst(5000);
 ```
 
-### Direct TCP (known IP)
+### Robot hotspot
 
-Once you have the IP and port from either method above:
+The robot can also expose its own WiFi access point. Connect your computer to it, then discover the robot via UDP or connect directly to its known IP.
+
+### Connecting
+
+Once you have the device from either method above:
 
 ```ts
-import { BrainState, ClicBot } from "./src/ClicBot";
+import { BrainState, ClicBot } from "clicbot-unofficial";
 
 const bot = new ClicBot();
 await bot.connect({ host: device.ip, port: device.port });
@@ -66,22 +71,6 @@ bot.on("clientInfo", () => {
 bot.on("structure", () => {
     console.log(bot.servoJoints); // ServoJointModule[]
 });
-```
-
-### UDP Discovery
-
-```ts
-import { ClicBotDiscovery } from "./src/discovery";
-
-// Resolve on first robot found (or reject after timeout)
-const device = await ClicBotDiscovery.discoverFirst(5000);
-
-// Stream devices continuously
-const discovery = new ClicBotDiscovery();
-discovery.on("device", (d) => console.log(d));
-discovery.start();
-// …later
-discovery.stop();
 ```
 
 ## Authentication

@@ -12,18 +12,14 @@
  *   QR_FILE    — output path when QR_OUTPUT=file (default "qrcode.png")
  */
 import { BrainState, ClicBot } from "../../src/ClicBot";
-import { discoverViaQrCode, QrOutput } from "../../src/discovery";
+import { buildQrContent, showQrCode, waitForRobot, QrOutput } from "../../src/discovery";
 
 const SSID =
     process.env.SSID ??
-    (() => {
-        throw new Error("SSID env var required");
-    })();
+    (() => { throw new Error("SSID env var required"); })();
 const PASSWORD =
     process.env.PASSWORD ??
-    (() => {
-        throw new Error("PASSWORD env var required");
-    })();
+    (() => { throw new Error("PASSWORD env var required"); })();
 
 function buildOutput(): QrOutput {
     const mode = process.env.QR_OUTPUT ?? "terminal";
@@ -33,13 +29,11 @@ function buildOutput(): QrOutput {
 }
 
 async function main(): Promise<void> {
-    const { device } = await discoverViaQrCode({
-        ssid: SSID,
-        password: PASSWORD,
-        localIp: process.env.IP,
-        udpPort: process.env.PORT ? Number(process.env.PORT) : undefined,
-        output: buildOutput(),
-    });
+    const udpPort = process.env.PORT ? Number(process.env.PORT) : 12345;
+
+    const content = buildQrContent({ ssid: SSID, password: PASSWORD, localIp: process.env.IP, udpPort });
+    await showQrCode(content, buildOutput());
+    const device = await waitForRobot(udpPort);
 
     console.log(`\nRobot at ${device.ip}:${device.port} — connecting...`);
 
@@ -71,7 +65,4 @@ async function main(): Promise<void> {
     });
 }
 
-main().catch((err) => {
-    console.error("Fatal:", err);
-    process.exit(1);
-});
+main().catch((err) => { console.error("Fatal:", err); process.exit(1); });

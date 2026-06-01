@@ -1,6 +1,6 @@
 {
   "name": "clicbot-unofficial",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Unofficial Node.js library for controlling ClicBot modular robots over TCP/UDP",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

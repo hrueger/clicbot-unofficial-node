@@ -138,11 +138,11 @@ export class ClicBotDiscovery extends EventEmitter<{
 
 // ── QR-code connection ────────────────────────────────────────────────────────
 
-/** How the QR code should be presented before waiting for the robot. */
+/** How the QR code should be presented. */
 export type QrOutput =
-    | { mode: "terminal" }          // print ASCII QR code to stdout (requires qrcode package)
+    | { mode: "terminal" }           // print ASCII QR code to stdout (requires qrcode package)
     | { mode: "file"; path: string } // save as PNG (requires qrcode package)
-    | { mode: "text" };             // print the raw WiFi config string, no qrcode package needed
+    | { mode: "text" };              // print the raw WiFi config string, no qrcode package needed
 
 export interface QrCodeDiscoveryOptions {
     ssid: string;
@@ -153,24 +153,16 @@ export interface QrCodeDiscoveryOptions {
     udpPort?: number;
     /** Milliseconds to wait for the robot before rejecting (default 60 000). */
     timeoutMs?: number;
-    /** How to present the QR code (default: terminal). */
-    output?: QrOutput;
 }
 
-/**
- * Display a QR code for the robot to scan, then wait for it to announce itself over UDP.
- *
- * Returns the discovered device once the robot connects.
- * Also returns the raw WiFi config string so callers can use it independently.
- */
-export async function discoverViaQrCode(
-    options: QrCodeDiscoveryOptions,
-): Promise<{ device: DiscoveredDevice; content: string }> {
-    const { ssid, password, udpPort = 12345, timeoutMs = 60_000 } = options;
+/** Build the WiFi config URI that encodes credentials and UDP return address. */
+export function buildQrContent(options: Pick<QrCodeDiscoveryOptions, "ssid" | "password" | "localIp" | "udpPort">): string {
     const localIp = options.localIp ?? getLocalIp();
-    const output = options.output ?? { mode: "terminal" };
-    const content = `WIFI:T:WPA;P:${password};S:${ssid};IP:${localIp};Port:${udpPort}`;
+    return `WIFI:T:WPA;P:${options.password};S:${options.ssid};IP:${localIp};Port:${options.udpPort ?? 12345}`;
+}
 
+/** Display or save a QR code from a pre-built content string. */
+export async function showQrCode(content: string, output: QrOutput = { mode: "terminal" }): Promise<void> {
     if (output.mode === "text") {
         console.log(content);
     } else {
@@ -178,7 +170,7 @@ export async function discoverViaQrCode(
         try {
             qrcode = await import("qrcode");
         } catch {
-            throw new Error('QR code rendering requires the "qrcode" package: npm install qrcode');
+            throw new Error('npm install qrcode');
         }
         if (output.mode === "terminal") {
             const art = await qrcode.toString(content, { type: "terminal" });
@@ -189,10 +181,22 @@ export async function discoverViaQrCode(
             console.log(`QR code saved to ${output.path}`);
         }
     }
+}
 
-    console.log(`Listening for robot on ${localIp}:${udpPort}...`);
-    const device = await listenForRobotAnnouncement(udpPort, timeoutMs);
-    return { device, content };
+/** Listen on *udpPort* for the robot's UDP announcement and return its address. */
+export function waitForRobot(udpPort = 12345, timeoutMs = 60_000): Promise<DiscoveredDevice> {
+    console.log(`\nListening for robot on port ${udpPort}...`);
+    return listenForRobotAnnouncement(udpPort, timeoutMs);
+}
+
+/**
+ * Convenience: build QR content, show it in the terminal, then wait for the robot.
+ * For custom output (file/text) call buildQrContent(), showQrCode(), and waitForRobot() separately.
+ */
+export async function discoverViaQrCode(options: QrCodeDiscoveryOptions): Promise<DiscoveredDevice> {
+    const content = buildQrContent(options);
+    await showQrCode(content);
+    return waitForRobot(options.udpPort, options.timeoutMs);
 }
 
 function getLocalIp(): string {
