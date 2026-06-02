@@ -51,9 +51,14 @@ async function main(): Promise<void> {
     for (const j of joints) j.rotateStart(false, 30);
     await sleep(3000);
 
-    // rotateStop is global (no per-module stop in the protocol)
-    console.log("Stopping rotation");
-    bot.rotateStop();
+    console.log("Stopping rotation for one joint");
+    joints[0].rotateStop();
+    await sleep(500);
+
+    console.log("Stopping rotation for all other joints");
+    for (let i = 1; i < joints.length; i++) {
+        joints[i].rotateStop();
+    }
     await sleep(500);
 
     console.log("Enabling push-rotate for 5 s — try physically turning a joint by hand.");
